@@ -1,0 +1,12 @@
+{
+  "name": "cognabright-public-website",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "devDependencies": {
+    "vercel": "latest"
+  }
+}
