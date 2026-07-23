@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (messageEl) messageEl.textContent = 'Sending your interest…';
 
     try {
-      const response = await fetch('/api/interest', {
+      const response = await fetch('/api/interest.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

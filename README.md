@@ -1,57 +1,122 @@
-# Cogna Bright Public Website V0.3
+# Cogna Bright Public Website V0.4 — cPanel/PHP
 
-Separate public showcase website for `cognabright.com`, ready for GitHub + Vercel.
+This package is designed for normal cPanel hosting such as VentraIP.
 
 ## Architecture
 
-Browser → `/api/interest` Vercel Function → Supabase `web_interest_submissions`
+Browser -> `/api/interest.php` -> Supabase -> `web_interest_submissions`
 
-The browser never receives a Supabase key.
+The Supabase secret is **not** included in browser JavaScript and should not be placed in GitHub.
 
-## Security model
+## Package layout
 
-- `SUPABASE_SERVICE_ROLE_KEY` is server-only.
-- Never place it in JavaScript shipped to the browser.
-- Never commit it to GitHub.
-- Add it only in Vercel Project Settings > Environment Variables.
-- The previous anonymous INSERT policy for `web_interest_submissions` has been removed.
-- Form submissions now go through the Vercel serverless API route only.
+```text
+cognabright-public-website-v0.4-cpanel-php/
+├── public_html/                       <- upload these contents to your cPanel public_html
+│   ├── api/
+│   │   └── interest.php
+│   ├── assets/
+│   ├── index.html
+│   ├── contact.html
+│   ├── styles.css
+│   ├── script.js
+│   └── ...
+│
+├── private-config/
+│   └── cognabright-config.example.php
+│
+└── README.md
+```
 
-## Vercel environment variables
+## Step 1 — Upload the website
 
-Create these variables in Vercel:
+In cPanel:
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+1. Open **File Manager**.
+2. Open `public_html`.
+3. Upload the **contents inside this package's `public_html` folder**.
+4. Confirm that `index.html` is directly inside your real cPanel `public_html` folder.
 
-Use Production, Preview, and Development as appropriate.
+Correct:
 
-## Deploy with GitHub
+```text
+/home/YOUR_USERNAME/public_html/index.html
+```
 
-1. Create a new GitHub repository, for example `cognabright-website`.
-2. Upload or push the contents of this folder to the repository root.
-3. In Vercel, choose **Add New > Project** and import the GitHub repository.
-4. Add the two environment variables above.
-5. Deploy.
-6. In Vercel Domains, add `cognabright.com` and follow Vercel's DNS instructions.
+Wrong:
 
-## Form endpoint
+```text
+/home/YOUR_USERNAME/public_html/cognabright-public-website-v0.4-cpanel-php/public_html/index.html
+```
 
-`POST /api/interest`
+## Step 2 — Create the private Supabase config
 
-Expected JSON fields:
+1. Open `private-config/cognabright-config.example.php` locally.
+2. Put your real Supabase URL and **Secret key** into a copy of the file.
+3. Rename the copy to:
 
-- `name`
-- `email`
-- `role`
-- `country`
-- `message`
-- `consent_updates`
+```text
+cognabright-config.php
+```
 
-The API performs basic validation, input length limits, a hidden honeypot bot check, and returns only generic public error messages.
+4. In cPanel File Manager, go one level above `public_html`.
+5. Upload the real `cognabright-config.php` there.
 
-## Files deliberately excluded
+Recommended final path:
 
-- `node_modules`
-- `dist`
-- `.env` files containing real secrets
+```text
+/home/YOUR_CPANEL_USERNAME/cognabright-config.php
+```
+
+Do **not** put the real config file inside `public_html`.
+
+Example:
+
+```php
+<?php
+return [
+    'supabase_url' => 'https://YOUR-PROJECT-REF.supabase.co',
+    'supabase_secret_key' => 'sb_secret_YOUR_REAL_SECRET',
+];
+```
+
+## Step 3 — Test the site
+
+Open:
+
+```text
+https://cognabright.com
+```
+
+Then submit the Register Interest form.
+
+The browser sends the form to:
+
+```text
+https://cognabright.com/api/interest.php
+```
+
+The PHP endpoint writes server-side to:
+
+```text
+web_interest_submissions
+```
+
+## Security notes
+
+- The browser never receives the Supabase secret key.
+- The real config file stays outside `public_html`.
+- The website table uses the `web_` prefix.
+- Direct anonymous Supabase inserts were previously disabled for this table.
+- The PHP endpoint validates input, limits body size, includes a honeypot and basic rate limiting.
+- Never commit `cognabright-config.php` containing real secrets to GitHub.
+
+## PHP requirements
+
+The host should provide:
+
+- PHP 8.x recommended
+- PHP cURL extension
+- HTTPS
+
+Most standard cPanel hosting plans include PHP and cURL.
