@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-07-23",
+  "definitions": {
+    "verified_now": "Traceable to working marketing-repository code or approved evidence within the stated scope.",
+    "in_development": "Under development; availability, completeness and suitability are not implied.",
+    "planned_for_evaluation": "A research or pilot pathway being prepared; approval, completion and findings are not implied.",
+    "not_claimed": "Withheld because evidence is unavailable, insufficient, unapproved or outside the audited scope."
+  },
+  "public_position": {
+    "completed_university_study": "not_claimed",
+    "clinical_outcomes": "not_claimed",
+    "customer_results": "not_claimed",
+    "pricing": "not_claimed",
+    "integrations": "not_claimed",
+    "security_certification": "not_claimed",
+    "partnership_enquiry_workflow": "verified_now",
+    "platform_capabilities": "in_development",
+    "independent_evaluation": "planned_for_evaluation"
+  }
+}

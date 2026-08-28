@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-07-23",
+  "statuses": ["verified_now", "in_development", "planned_for_evaluation", "not_claimed"],
+  "claims": [
+    {
+      "id": "CB-MKT-001",
+      "statement": "Cogna Bright is developing a digital platform for everyday communication, routines and shared support and is seeking partners to shape evaluation.",
+      "status": "in_development",
+      "approved_for_publication": true,
+      "evidence": ["platform.html", "research.html", "organisations.html"],
+      "scope_note": "Developmental description only; no availability or effectiveness claim."
+    },
+    {
+      "id": "CB-MKT-002",
+      "statement": "Cogna Bright is preparing for independent evaluation and does not claim a completed university study.",
+      "status": "planned_for_evaluation",
+      "approved_for_publication": true,
+      "evidence": ["research.html", "evidence.html"],
+      "scope_note": "No institution, protocol, approval, commencement or result is implied."
+    },
+    {
+      "id": "CB-MKT-003",
+      "statement": "A server-mediated partnership enquiry pathway is implemented.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["contact.html", "script.js", "api/interest.js", "api/interest.php", "supabase/migrations/20260723083004_add_partnership_enquiry_fields.sql", "supabase/migrations/20260723085919_harden_web_interest_grants.sql"],
+      "scope_note": "Verified in the public marketing repository and connected non-production database after migration."
+    },
+    {
+      "id": "CB-MKT-004",
+      "statement": "Cogna Bright is seeking research conversations about evaluation design, feasibility, accessibility, implementation and evidence development.",
+      "status": "planned_for_evaluation",
+      "approved_for_publication": true,
+      "evidence": ["research.html", "contact.html"],
+      "scope_note": "Invitation to enquire; partnership existence is not implied."
+    },
+    {
+      "id": "CB-MKT-005",
+      "statement": "Cogna Bright welcomes early conversations with disability, allied-health, education and community organisations.",
+      "status": "planned_for_evaluation",
+      "approved_for_publication": true,
+      "evidence": ["organisations.html", "contact.html"],
+      "scope_note": "Invitation to enquire; adoption or endorsement is not implied."
+    },
+    {
+      "id": "CB-MKT-006",
+      "statement": "Families and providers may express interest in possible future pilots without any promise of a place, eligibility, date or access.",
+      "status": "planned_for_evaluation",
+      "approved_for_publication": true,
+      "evidence": ["pilots.html", "contact.html"],
+      "scope_note": "Expression of interest only; no pilot is represented as approved or open."
+    },
+    {
+      "id": "CB-MKT-007",
+      "statement": "The platform direction concerns communication, routines, observations and shared support, with exact capabilities subject to change.",
+      "status": "in_development",
+      "approved_for_publication": true,
+      "evidence": ["platform.html"],
+      "scope_note": "No present availability, integration or outcome claim."
+    },
+    {
+      "id": "CB-MKT-008",
+      "statement": "The marketing repository uses a public evidence-status framework and claims registry.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["evidence.html", "data/marketing-claims.json", "tests/site.test.mjs"],
+      "scope_note": "Applies to this marketing repository only."
+    },
+    {
+      "id": "CB-MKT-009",
+      "statement": "Cogna Bright is inviting conversations about future independent evaluation; no completed study or finding is represented.",
+      "status": "planned_for_evaluation",
+      "approved_for_publication": true,
+      "evidence": ["research.html", "evidence.html", "contact.html"],
+      "scope_note": "No research partnership or result is claimed."
+    },
+    {
+      "id": "CB-MKT-010",
+      "statement": "Cogna Bright is developing a digital platform and a partnership pathway before broad commercial or outcome claims.",
+      "status": "in_development",
+      "approved_for_publication": true,
+      "evidence": ["about.html", "platform.html", "contact.html"],
+      "scope_note": "Corporate development statement, not a product performance claim."
+    },
+    {
+      "id": "CB-MKT-011",
+      "statement": "The partnership form collects the fields listed in the website privacy notice.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["contact.html", "script.js", "api/interest.js", "api/interest.php"],
+      "scope_note": "Website enquiry fields only."
+    },
+    {
+      "id": "CB-MKT-012",
+      "statement": "Enquiries use server-side database credentials and are not anonymously readable through the website.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["api/interest.js", "api/interest.php", "docs/repository-audit.md"],
+      "scope_note": "Based on repository code and the audited web_interest_submissions grants/RLS state."
+    },
+    {
+      "id": "CB-MKT-013",
+      "statement": "The repository does not implement advertising trackers, behavioural analytics, heat maps or a newsletter service.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["docs/repository-audit.md", "package.json"],
+      "scope_note": "Repository scope only; ordinary hosting logs may still exist."
+    },
+    {
+      "id": "CB-MKT-014",
+      "statement": "The website targets WCAG 2.1 Level AA requirements, considers relevant WCAG 2.2 guidance, and does not claim certification or an independent conformance audit.",
+      "status": "in_development",
+      "approved_for_publication": true,
+      "evidence": ["accessibility.html", "styles.css", "script.js", "tests/site.test.mjs"],
+      "scope_note": "Target statement only; manual and independent review remain outstanding."
+    }
+  ]
+}
