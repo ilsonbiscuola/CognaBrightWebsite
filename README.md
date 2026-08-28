@@ -1,122 +1,109 @@
-# Cogna Bright Public Website V0.4 — cPanel/PHP
+# Cogna Bright public marketing website
 
-This package is designed for normal cPanel hosting such as VentraIP.
+This repository contains the static public marketing website for Cogna Bright. Its primary conversion is a research or organisation partnership enquiry.
+
+## Scope
+
+- Universities and researchers
+- Disability, allied-health, education and community organisations
+- Families and providers interested in approved future pilots
+- Public evidence status, claims governance, privacy and accessibility information
+
+The separate Cogna Bright application and authentication routes live in the
+application repository. During local testing, the public-site **Sign in** and
+**Sign up** actions point to `http://localhost:5173/sign-in` and
+`http://localhost:5173/signup`. No production or staging application hostname
+is used. When the website is opened from a private-network address such as
+`192.168.x.x`, the browser rewrites those links to the same device hostname on
+port `5173`, so a phone on the same network reaches the development app rather
+than its own `localhost`.
 
 ## Architecture
 
-Browser -> `/api/interest.php` -> Supabase -> `web_interest_submissions`
+The static site supports two existing production workflows:
 
-The Supabase secret is **not** included in browser JavaScript and should not be placed in GitHub.
+- Vercel: browser → `/api/interest.php` rewrite → `api/interest.js` → Supabase RPC
+- cPanel: browser → `/api/interest.php` → `api/interest.php` → Supabase RPC
 
-## Package layout
+The same static site and locale resources serve both `cognabright.com` and
+`cognabright.com.br`. The hostname is never used to select a language and the
+site does not redirect between domains.
 
-```text
-cognabright-public-website-v0.4-cpanel-php/
-├── public_html/                       <- upload these contents to your cPanel public_html
-│   ├── api/
-│   │   └── interest.php
-│   ├── assets/
-│   ├── index.html
-│   ├── contact.html
-│   ├── styles.css
-│   ├── script.js
-│   └── ...
-│
-├── private-config/
-│   └── cognabright-config.example.php
-│
-└── README.md
-```
+Database credentials stay on the server. The form migration is in `supabase/migrations/`.
 
-## Step 1 — Upload the website
+## Public-site localisation
 
-In cPanel:
+The website supports exactly `en-AU`, `en-US`, `pt-BR`, `da-DK`, `fr-FR`,
+`de-DE`, `it-IT`, `es-ES` and `sv-SE`. Locale selection is centralised in
+`i18n/core.js` and follows this order:
 
-1. Open **File Manager**.
-2. Open `public_html`.
-3. Upload the **contents inside this package's `public_html` folder**.
-4. Confirm that `index.html` is directly inside your real cPanel `public_html` folder.
+1. validated explicit preference in `cognabright_locale`;
+2. cached or server-detected coarse country code;
+3. the first supported value in `navigator.languages`;
+4. `en-AU`.
 
-Correct:
+`cognabright_geo` stores only a two-letter country code and detection/expiry
+timestamps for seven days. `/api/country.php` is rewritten to the Vercel
+function and reads a Vercel or Cloudflare country header. The PHP endpoint uses
+equivalent CDN/server variables on cPanel. If no trusted hosting signal exists,
+the endpoint returns `null` and the browser-language fallback is used. No IP
+address, precise location, external geo provider, API key or location
+permission is used.
 
-```text
-/home/YOUR_USERNAME/public_html/index.html
-```
+Locale files live in `i18n/locales/` and only the active non-canonical bundle is
+loaded. `scripts/generate-locales.mjs` maintains the canonical source index and
+locale bundles. The language control is injected into the desktop header,
+mobile navigation and footer, and switching it updates content, metadata,
+accessible names, form states, assets and `<html lang>` without navigation or a
+page reload.
 
-Wrong:
+Language selection is intentionally not encoded in the URL. Canonicals remain
+on the primary `.com` URL and no same-URL `hreflang` links are emitted. If
+separately indexed translations become a priority, locale-specific paths should
+be designed as a future SEO project.
 
-```text
-/home/YOUR_USERNAME/public_html/cognabright-public-website-v0.4-cpanel-php/public_html/index.html
-```
-
-## Step 2 — Create the private Supabase config
-
-1. Open `private-config/cognabright-config.example.php` locally.
-2. Put your real Supabase URL and **Secret key** into a copy of the file.
-3. Rename the copy to:
+## Local checks
 
 ```text
-cognabright-config.php
+npm run typecheck
+npm test
+npm run build
 ```
 
-4. In cPanel File Manager, go one level above `public_html`.
-5. Upload the real `cognabright-config.php` there.
+`npm run build` creates an ignored `dist/` deployment bundle without changing the source deployment model.
 
-Recommended final path:
+## Local authentication testing
 
-```text
-/home/YOUR_CPANEL_USERNAME/cognabright-config.php
+Start the application before using the public-site login button:
+
+```powershell
+cd C:\CognaBright\Repository\cognabright-staging
+npm run dev:host -- --port 5173 --strictPort
 ```
 
-Do **not** put the real config file inside `public_html`.
+Then open this marketing website locally and choose **Sign in** or **Sign up**. Supabase email
+or OAuth authentication returns to `http://localhost:5173/auth/callback`, and
+the application routes the account according to its family and provider
+licences.
 
-Example:
+Before any staging release, replace the local authentication targets with the approved
+staging application URL and add its callback URL to the Supabase Auth redirect
+allow-list.
 
-```php
-<?php
-return [
-    'supabase_url' => 'https://YOUR-PROJECT-REF.supabase.co',
-    'supabase_secret_key' => 'sb_secret_YOUR_REAL_SECRET',
-];
-```
+## Required server configuration
 
-## Step 3 — Test the site
+- `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY` (preferred) or legacy `SUPABASE_SERVICE_ROLE_KEY`
+- `SITE_ORIGIN` (optional additional allowed origin)
 
-Open:
+For cPanel, equivalent values can be placed in the private configuration file outside `public_html`.
 
-```text
-https://cognabright.com
-```
+## Governance
 
-Then submit the Register Interest form.
+- `data/marketing-claims.json` is the publication registry.
+- `data/evidence-status.json` defines public status labels.
+- `docs/repository-audit.md` records what was and was not found.
+- `docs/claims-governance.md` defines the approval workflow.
+- `docs/deployment.md` lists release requirements.
 
-The browser sends the form to:
-
-```text
-https://cognabright.com/api/interest.php
-```
-
-The PHP endpoint writes server-side to:
-
-```text
-web_interest_submissions
-```
-
-## Security notes
-
-- The browser never receives the Supabase secret key.
-- The real config file stays outside `public_html`.
-- The website table uses the `web_` prefix.
-- Direct anonymous Supabase inserts were previously disabled for this table.
-- The PHP endpoint validates input, limits body size, includes a honeypot and basic rate limiting.
-- Never commit `cognabright-config.php` containing real secrets to GitHub.
-
-## PHP requirements
-
-The host should provide:
-
-- PHP 8.x recommended
-- PHP cURL extension
-- HTTPS
-
-Most standard cPanel hosting plans include PHP and cURL.
+Do not publish roadmap items, mock-ups, results, logos, testimonials, pricing or compliance language without reviewed evidence and an approved registry entry.

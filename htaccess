@@ -1,9 +1,31 @@
 DirectoryIndex index.html index.php
 
+RewriteEngine On
+
+RewriteRule ^families(?:\.html)?$ /pilots [R=301,L,NE]
+RewriteRule ^for-families/?$ /pilots [R=301,L,NE]
+RewriteRule ^professionals(?:\.html)?$ /organisations [R=301,L,NE]
+RewriteRule ^for-(?:professionals|therapists|clinics)/?$ /organisations [R=301,L,NE]
+RewriteRule ^features(?:\.html)?$ /platform [R=301,L,NE]
+RewriteRule ^pricing/?$ /contact [R=301,L,NE]
+RewriteRule ^case-studies/?$ /evidence [R=301,L,NE]
+RewriteRule ^outcomes/?$ /evidence [R=301,L,NE]
+RewriteRule ^contact-sales/?$ /contact [R=301,L,NE]
+RewriteRule ^signup/?$ /contact [R=301,L,NE]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set X-Frame-Options "DENY"
+</IfModule>
+
 # BEGIN cPanel-generated php ini directives, do not edit
-# Manual editing of this file may result in unexpected behavior.
-# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
-# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
 <IfModule php8_module>
    php_value error_log "/home/cognabright/logs/php.error.log"
    php_flag log_errors On
