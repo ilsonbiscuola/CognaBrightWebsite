@@ -4,49 +4,59 @@ import { pathToFileURL } from 'node:url';
 
 const root = process.cwd();
 const reviewedOverrides = JSON.parse(await readFile(join(root, 'i18n', 'reviewed-overrides.json'), 'utf8'));
-const pages = ['index', 'research', 'organisations', 'pilots', 'platform', 'evidence', 'about', 'contact', 'privacy', 'accessibility'];
+const pages = ['index', 'research', 'organisations', 'families', 'platform', 'evidence', 'about', 'contact', 'privacy', 'terms', 'subscription-terms', 'accessibility', 'pricing'];
 const sectionNames = {
-  index: ['hero', 'audiences', 'approach', 'evidence', 'cta'],
-  research: ['hero', 'collaboration', 'status', 'firstConversation', 'cta'],
-  organisations: ['hero', 'themes', 'boundaries', 'startingInformation', 'cta'],
-  pilots: ['hero', 'readiness', 'meaning', 'cta'],
-  platform: ['hero', 'capabilities', 'boundaries', 'cta'],
-  evidence: ['hero', 'framework', 'position', 'publication', 'cta'],
+  index: ['hero', 'audiences', 'whyChoose', 'evidence', 'cta'],
+  research: ['hero', 'collaboration', 'status', 'pilots', 'firstConversation', 'cta'],
+  organisations: ['hero', 'team', 'manage', 'pricing', 'cta'],
+  families: ['hero', 'routines', 'goals', 'connect', 'cta'],
+  platform: ['hero', 'everyday', 'communication', 'goals', 'working', 'create', 'boundaries', 'cta'],
+  evidence: ['hero', 'framework', 'position', 'publication'],
   about: ['hero', 'audience', 'principles', 'cta'],
   contact: ['hero', 'form'],
   privacy: ['hero', 'notice'],
-  accessibility: ['hero', 'measures']
+  terms: ['hero', 'terms'],
+  'subscription-terms': ['hero', 'subscription'],
+  accessibility: ['hero', 'measures'],
+  pricing: ['hero', 'family', 'organisation', 'cta']
 };
 
 const common = new Map(Object.entries({
   'Skip to main content': 'common.a11y.skipToContent',
-  'Cogna Bright home': 'common.a11y.home',
+  'CognaBright home': 'common.a11y.home',
   'Primary navigation': 'common.a11y.primaryNavigation',
   'Mobile navigation': 'common.a11y.mobileNavigation',
   'Open menu': 'common.menu.open',
   'Close menu': 'common.menu.close',
   'Menu': 'common.menu.label',
-  'Research': 'common.nav.research',
+  'Home': 'common.nav.home',
+  'Families': 'common.nav.families',
   'Organisations': 'common.nav.organisations',
-  'Future pilots': 'common.nav.pilots',
-  'Platform direction': 'common.nav.platform',
+  'Features': 'common.nav.features',
+  'Pricing': 'common.nav.pricing',
+  'Research': 'common.nav.research',
   'Evidence status': 'common.nav.evidence',
   'About': 'common.nav.about',
   'Sign in': 'common.nav.signIn',
   'Sign up': 'common.nav.signUp',
-  'Discuss a partnership': 'common.actions.discussPartnership',
-  'Discuss research': 'common.actions.discussResearch',
-  'Express future interest': 'common.actions.expressInterest',
-  'Enquire': 'common.actions.enquire',
-  'Partnerships': 'common.footer.partnerships',
+  'Contact us': 'common.actions.contactUs',
+  'Get started': 'common.footer.getStarted',
   'Governance': 'common.footer.governance',
-  'Website privacy': 'common.footer.privacy',
+  'Privacy': 'common.footer.privacy',
+  'Terms': 'common.footer.terms',
+  'Subscription terms': 'common.footer.subscriptionTerms',
   'Accessibility': 'common.footer.accessibility',
+  'Social media': 'common.footer.social.navLabel',
+  'Facebook': 'common.footer.social.facebook',
+  'Instagram': 'common.footer.social.instagram',
+  'YouTube': 'common.footer.social.youtube',
+  'TikTok': 'common.footer.social.tiktok',
+  'CognaBright website': 'common.footer.social.website',
   'Verified now': 'common.status.verified',
   'In development': 'common.status.development',
   'Planned for evaluation': 'common.status.evaluation',
   'Not claimed': 'common.status.notClaimed',
-  'Cogna Bright': 'common.brand.name',
+  'CognaBright': 'common.brand.name',
   'Select language': 'common.language.select',
   'Choose a language': 'common.language.choose',
   'Current language': 'common.language.current',
@@ -59,21 +69,21 @@ const common = new Map(Object.entries({
   'Italiano': 'common.language.names.it-IT',
   'Español': 'common.language.names.es-ES',
   'Svenska': 'common.language.names.sv-SE',
-  'Navigation works as local files. Sending an enquiry requires the website to run through a local or hosted web server.': 'contact.form.messages.localServerRequired',
-  'Please confirm that you have read the website privacy notice.': 'contact.form.messages.privacyRequired',
+  'Navigation works as local files. Sending a message requires the website to run through a local or hosted web server.': 'contact.form.messages.localServerRequired',
+  'Please confirm that you have read the privacy notice.': 'contact.form.messages.privacyRequired',
   'Sending…': 'contact.form.messages.sendingShort',
-  'Sending your partnership enquiry…': 'contact.form.messages.sending',
-  'Unable to send your enquiry right now.': 'contact.form.messages.unavailable',
-  'Unable to send your enquiry right now. Please try again later.': 'contact.form.messages.tryLater',
-  'Thank you. Your partnership enquiry has been received.': 'contact.form.messages.success',
-  'Send partnership enquiry': 'contact.form.submit',
+  'Sending your message…': 'contact.form.messages.sending',
+  'Unable to send your message right now.': 'contact.form.messages.unavailable',
+  'Unable to send your message right now. Please try again later.': 'contact.form.messages.tryLater',
+  'Thank you. Your message has been received.': 'contact.form.messages.success',
+  'Send message': 'contact.form.submit',
   'Please complete this field.': 'contact.form.validation.required',
   'Enter a valid email address.': 'contact.form.validation.email',
   'This value is too long.': 'contact.form.validation.tooLong',
   'A mother encouraging her son as they arrange visual routine cards together at home': 'home.hero.imageAlt',
   'For example, Australia': 'contact.form.country.placeholder',
-  'For example, feasibility research or accessibility review': 'contact.form.interest.placeholder',
-  'Describe the question, setting and type of collaboration you would like to explore.': 'contact.form.context.placeholder'
+  'For example, organisation pricing or accessibility review': 'contact.form.interest.placeholder',
+  "Describe your question, setting and what you'd like to explore.": 'contact.form.context.placeholder'
 }));
 
 const messages = {};
@@ -196,14 +206,14 @@ const localeNames = {
 
 function protect(value) {
   return value
-    .replaceAll('Cogna Bright', '__COGNABRIGHT__')
+    .replaceAll('CognaBright', '__COGNABRIGHT__')
     .replaceAll('WCAG 2.1 Level AA', '__WCAG21AA__')
     .replaceAll('WCAG 2.2', '__WCAG22__');
 }
 
 function restore(value) {
   return value
-    .replaceAll('__COGNABRIGHT__', 'Cogna Bright')
+    .replaceAll('__COGNABRIGHT__', 'CognaBright')
     .replaceAll('__WCAG21AA__', 'WCAG 2.1 Level AA')
     .replaceAll('__WCAG22__', 'WCAG 2.2');
 }

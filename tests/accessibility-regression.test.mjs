@@ -4,9 +4,12 @@ import { test } from 'node:test';
 
 const css = readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 const script = readFileSync(new URL('../script.js', import.meta.url), 'utf8');
+const contact = readFileSync(new URL('../contact.html', import.meta.url), 'utf8');
+const platform = readFileSync(new URL('../platform.html', import.meta.url), 'utf8');
 const pages = [
-  'index.html', 'research.html', 'organisations.html', 'pilots.html', 'platform.html',
-  'evidence.html', 'about.html', 'contact.html', 'privacy.html', 'accessibility.html'
+  'index.html', 'research.html', 'organisations.html', 'families.html', 'platform.html',
+  'evidence.html', 'about.html', 'contact.html', 'privacy.html', 'terms.html', 'subscription-terms.html',
+  'accessibility.html', 'pricing.html'
 ];
 
 function luminance(hex) {
@@ -20,17 +23,35 @@ function contrast(first, second) {
   return (values[0] + 0.05) / (values[1] + 0.05);
 }
 
-test('primary action colours retain WCAG AA text contrast against white', () => {
-  for (const colour of ['#075bb5', '#087a83', '#0753a4', '#076b72', '#075ab3', '#176338']) {
-    assert.ok(contrast(colour, '#ffffff') >= 4.5, `${colour} must provide at least 4.5:1 contrast`);
+test('normal text colours retain WCAG AAA enhanced contrast', () => {
+  for (const foreground of ['#0b2765', '#3d526f', '#06575f', '#064b91']) {
+    for (const background of ['#ffffff', '#f1f8ff', '#e8f8f5', '#fff9e9']) {
+      assert.ok(contrast(foreground, background) >= 7, `${foreground} on ${background} must provide at least 7:1 contrast`);
+    }
+  }
+  for (const colour of ['#053f7b', '#05545b', '#12552d', '#176338', '#a12c22']) {
+    assert.ok(contrast(colour, '#ffffff') >= 7, `${colour} on white must provide at least 7:1 contrast`);
   }
 });
 
 test('interactive controls expose robust mobile target sizes', () => {
+  assert.match(css, /\.logo-wrap\s*\{[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
+  assert.match(css, /\.nav a\s*\{[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
+  assert.match(css, /\.link-list a\s*\{[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
+  assert.match(css, /\.footer-links a\s*\{[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
   assert.match(css, /\.button-sm\s*\{[^}]*min-height:\s*48px/s);
   assert.match(css, /\.menu-toggle\s*\{[^}]*min-height:\s*48px/s);
   assert.match(css, /\.mobile-panel \.mobile-auth-actions a\s*\{[^}]*min-height:\s*50px/s);
   assert.match(css, /input, select, textarea\s*\{[^}]*min-height:\s*52px/s);
+});
+
+test('focus indicators retain a two-colour ring across light and dark surfaces', () => {
+  assert.match(css, /\*:focus-visible\s*\{[^}]*outline:\s*3px solid #fff;[^}]*box-shadow:\s*0 0 0 7px var\(--ink\)/s);
+});
+
+test('long-form content uses a readable measure and increased paragraph separation', () => {
+  assert.match(css, /\.prose\s*\{[^}]*max-width:\s*70ch/s);
+  assert.match(css, /\.prose p \+ p\s*\{[^}]*margin-top:\s*2\.4em/s);
 });
 
 test('contact form remains centred within its responsive container', () => {
@@ -52,9 +73,18 @@ test('language selector pairs decorative country flags with native language name
   assert.match(script, /data-language-flag[^>]*alt="" aria-hidden="true"/);
   assert.match(script, /class="language-option-label"/);
   assert.match(script, /LOCALE_NAMES\[locale\]/);
+  assert.match(script, /lang="\$\{locale\}" data-locale="\$\{locale\}"/);
   assert.match(css, /\.language-check\s*\{[^}]*visibility:\s*hidden/s);
   assert.match(css, /\.language-option\[aria-checked="true"\] \.language-check\s*\{[^}]*visibility:\s*visible/s);
   assert.doesNotMatch(css, /\.footer-language/);
+});
+
+test('content sections have headings and required fields are visibly identified', () => {
+  assert.match(platform, /<h2>Support for the routines that make up a day\.<\/h2>/);
+  assert.match(contact, /<h2 class="visually-hidden">Contact us<\/h2>/);
+  assert.match(contact, /Fields marked \* are required\./);
+  assert.equal((contact.match(/class="required-marker"/g) ?? []).length, 5);
+  assert.match(contact, /data-form-message[^>]*><\/p>/);
 });
 
 test('all primary pages retain a responsive viewport and one main landmark', () => {

@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 
 const pages = [
   'index', 'research', 'organisations', 'pilots', 'platform', 'evidence',
-  'about', 'contact', 'privacy', 'accessibility', 'families', 'professionals', 'features'
+  'about', 'contact', 'privacy', 'accessibility', 'pricing', 'families', 'professionals', 'features'
 ];
 const scripts = '<script src="./i18n/core.js"></script><script src="./i18n/locales/en-AU.js"></script><script src="./i18n/boot.js"></script>';
 const redirectLabels = {

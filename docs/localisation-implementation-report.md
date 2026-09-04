@@ -1,4 +1,4 @@
-# Cogna Bright public website localisation implementation report
+# CognaBright public website localisation implementation report
 
 Date: 28 August 2026
 
@@ -63,7 +63,7 @@ All 351 keys are present and non-empty in all nine resources. Content coverage i
 
 The 28 August follow-up review replaced machine-literal Brazilian Portuguese throughout the main research, organisation, pilot, privacy, consent, evidence, and accessibility journeys. In particular, `salvaguarda` was replaced with context-appropriate `medidas de proteção`, and the incorrect legal-entity translations of “General partnership question” were corrected in Portuguese, French, Italian, and Spanish. Reviewed high-risk overrides are reapplied after locale generation so these corrections cannot be silently overwritten.
 
-`en-US` applies US spelling while `en-AU` retains the source spelling. Cogna Bright, URLs, form values, claim identifiers, WCAG identifiers, and technical field names remain unchanged.
+`en-US` applies US spelling while `en-AU` retains the source spelling. CognaBright, URLs, form values, claim identifiers, WCAG identifiers, and technical field names remain unchanged.
 
 ## 6. Language selector and accessibility
 
@@ -113,7 +113,7 @@ The detailed inventory is in `docs/localisation-asset-inventory.md`.
 - Locale-specific raster variants created: 0
 - Unresolved public assets: 0
 
-`logo.png` contains only the protected Cogna Bright brand name and is shared. `mother-son-goals.png` contains no readable text and is shared; its alt text changes with locale. `brand-presentation.png` and `website-preview.png` contain extensive English product/marketing UI but are not referenced by any page. Their source files are preserved, while the build now excludes them from `dist`, preventing English-only or unverified product screenshots from being exposed on translated public pages. No product feature was fabricated to create a screenshot.
+`logo.png` contains only the protected CognaBright brand name and is shared. `mother-son-goals.png` contains no readable text and is shared; its alt text changes with locale. `brand-presentation.png` and `website-preview.png` contain extensive English product/marketing UI but are not referenced by any page. Their source files are preserved, while the build now excludes them from `dist`, preventing English-only or unverified product screenshots from being exposed on translated public pages. No product feature was fabricated to create a screenshot.
 
 The central `localizedAsset` resolver and manifest handle all published assets and warn in local development for unknown or missing required variants. Because there is no rendered text-bearing asset, switching locale correctly retains the two shared paths while changing their translatable accessible context; there is no stale previous-language image variant.
 

@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "typecheck": "node --check script.js && node --check i18n/core.js && node --check i18n/boot.js && node --check api/interest.js && node --check api/country.js",
+    "typecheck": "node --check script.js && node --check i18n/core.js && node --check i18n/boot.js && node --check api/interest.js && node --check api/country.js && node --check pricing.js",
     "test": "node --test",
     "build": "node scripts/build.mjs",
     "check": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@revenuecat/purchases-js": "1.48.1"
   },
   "devDependencies": {
     "vercel": "latest"

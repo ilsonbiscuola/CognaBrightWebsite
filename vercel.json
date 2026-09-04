@@ -3,18 +3,17 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/families", "destination": "/pilots", "permanent": true },
-    { "source": "/for-families", "destination": "/pilots", "permanent": true },
+    { "source": "/pilots", "destination": "/families", "permanent": true },
+    { "source": "/for-families", "destination": "/families", "permanent": true },
     { "source": "/professionals", "destination": "/organisations", "permanent": true },
     { "source": "/for-professionals", "destination": "/organisations", "permanent": true },
     { "source": "/for-therapists", "destination": "/organisations", "permanent": true },
     { "source": "/for-clinics", "destination": "/organisations", "permanent": true },
     { "source": "/features", "destination": "/platform", "permanent": true },
-    { "source": "/pricing", "destination": "/contact", "permanent": true },
     { "source": "/case-studies", "destination": "/evidence", "permanent": true },
     { "source": "/outcomes", "destination": "/evidence", "permanent": true },
     { "source": "/contact-sales", "destination": "/contact", "permanent": true },
-    { "source": "/signup", "destination": "/contact", "permanent": true }
+    { "source": "/signup", "destination": "https://app.cognabright.com/sign-in", "permanent": false }
   ],
   "rewrites": [
     { "source": "/api/interest.php", "destination": "/api/interest" },

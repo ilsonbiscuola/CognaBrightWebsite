@@ -94,7 +94,7 @@ See `docs/deployment.md`. The database migration, environment configuration, leg
 - Accessibility review with assistive technologies and representative users
 - Visual review across supported browsers and devices
 - Operational ownership, response process and deletion-request process for enquiries
-- Final review of all public wording by an authorised Cogna Bright owner
+- Final review of all public wording by an authorised CognaBright owner
 - Review of broader connected-project security advisor findings outside this repository’s scope
 
 ## Validation

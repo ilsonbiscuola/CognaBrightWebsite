@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.cognabright.com/</loc></url>
-  <url><loc>https://www.cognabright.com/research</loc></url>
+  <url><loc>https://www.cognabright.com/families</loc></url>
   <url><loc>https://www.cognabright.com/organisations</loc></url>
-  <url><loc>https://www.cognabright.com/pilots</loc></url>
+  <url><loc>https://www.cognabright.com/pricing</loc></url>
   <url><loc>https://www.cognabright.com/platform</loc></url>
+  <url><loc>https://www.cognabright.com/research</loc></url>
   <url><loc>https://www.cognabright.com/evidence</loc></url>
   <url><loc>https://www.cognabright.com/about</loc></url>
   <url><loc>https://www.cognabright.com/contact</loc></url>
   <url><loc>https://www.cognabright.com/privacy</loc></url>
+  <url><loc>https://www.cognabright.com/terms</loc></url>
+  <url><loc>https://www.cognabright.com/subscription-terms</loc></url>
   <url><loc>https://www.cognabright.com/accessibility</loc></url>
 </urlset>
