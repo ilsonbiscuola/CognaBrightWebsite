@@ -16,8 +16,9 @@ test('authentication and accessibility language is reviewed in every translated 
     const catalogue = messages(locale);
     assert.ok(catalogue['common.nav.signIn']);
     assert.ok(catalogue['common.nav.signUp']);
-    assert.match(catalogue['accessibility.measures.p1'], /WCAG 2\.1/);
+    assert.match(catalogue['accessibility.measures.p1'], /\(WCAG\) 2\.1/);
     assert.match(catalogue['accessibility.measures.p1'], /WCAG 2\.2/);
+    assert.match(catalogue['contact.form.p12'], /\*/);
   }
 });
 
@@ -29,8 +30,8 @@ test('known partnership and consent mistranslations cannot return', () => {
   }
   const portuguese = messages('pt-BR');
   assert.doesNotMatch(Object.values(portuguese).join('\n'), /salvaguardas?/i);
-  assert.equal(portuguese['organisations.themes.card3.title'], 'Medidas de proteção');
-  assert.match(portuguese['contact.form.span12'], /autorizo a Cogna Bright/);
+  assert.equal(portuguese['organisations.team.card1.title'], 'Manter o apoio centrado na pessoa');
+  assert.match(portuguese['contact.form.span12'], /autorizo a CognaBright/);
 });
 
 test('reviewed translation overrides cover every non-English locale and only canonical keys', () => {

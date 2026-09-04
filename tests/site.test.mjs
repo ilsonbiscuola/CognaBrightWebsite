@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 
 const root = process.cwd();
-const redirectPages = new Set(['families.html', 'professionals.html', 'features.html']);
+const redirectPages = new Set(['pilots.html', 'professionals.html', 'features.html']);
 const htmlFiles = (await readdir(root)).filter((file) => file.endsWith('.html'));
 const mainPages = htmlFiles.filter((file) => !redirectPages.has(file));
 const registry = JSON.parse(await readFile(join(root, 'data/marketing-claims.json'), 'utf8'));
@@ -75,7 +75,7 @@ test('navigation targets and sitemap pages exist', async () => {
 test('deployment redirects cover unsupported legacy conversion routes', async () => {
   const config = JSON.parse(await readFile(join(root, 'vercel.json'), 'utf8'));
   const sources = new Set(config.redirects.map((redirect) => redirect.source));
-  for (const route of ['/pricing', '/case-studies', '/outcomes', '/signup', '/for-families', '/for-therapists', '/for-clinics']) {
+  for (const route of ['/case-studies', '/outcomes', '/signup', '/for-families', '/for-therapists', '/for-clinics']) {
     assert.ok(sources.has(route), `missing redirect for ${route}`);
   }
 });

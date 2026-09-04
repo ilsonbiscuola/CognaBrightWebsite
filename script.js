@@ -163,7 +163,14 @@
     }
   }
 
-  function setupLocalAuthenticationLinks() {
+  const PRODUCTION_APP_SIGN_IN_URL = 'https://app.cognabright.com/sign-in';
+
+  // Family and Organisation sign-in/sign-up share one combined app screen —
+  // there is no separate signup route. Every [data-app-auth] link already
+  // points at that real production URL in markup; this only overrides it
+  // when the marketing site itself is being previewed from a local/private
+  // network host, so it can point at a locally-running Family app instead.
+  function setupAuthenticationLinks() {
     const hostname = location.hostname;
     const isPrivatePreview = hostname === 'localhost'
       || hostname === '127.0.0.1'
@@ -171,11 +178,11 @@
       || /^10\./.test(hostname)
       || /^192\.168\./.test(hostname)
       || /^172\.(1[6-9]|2\d|3[01])\./.test(hostname);
-    if (!isPrivatePreview) return;
-    const appOrigin = `http://${hostname === '::1' ? '[::1]' : hostname}:5173`;
+    const target = isPrivatePreview
+      ? `http://${hostname === '::1' ? '[::1]' : hostname}:5173/sign-in`
+      : PRODUCTION_APP_SIGN_IN_URL;
     for (const link of document.querySelectorAll('[data-app-auth]')) {
-      const route = link.dataset.appAuth === 'signup' ? '/signup' : '/sign-in';
-      link.href = `${appOrigin}${route}`;
+      link.href = target;
     }
   }
 
@@ -230,7 +237,7 @@
   function languageSelectorMarkup(id) {
     const chevron = '<svg class="language-chevron" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 6 4 4 4-4"></path></svg>';
     const options = core.SUPPORTED_LOCALES.map((locale) => (
-      `<button class="language-option" type="button" role="menuitemradio" aria-checked="false" data-locale="${locale}" data-i18n-ignore><span class="language-option-label"><img class="language-flag" src="${LOCALE_FLAG_ASSETS[locale]}" width="28" height="20" alt="" aria-hidden="true"><span>${LOCALE_NAMES[locale]}</span></span><span class="language-check" aria-hidden="true">✓</span></button>`
+      `<button class="language-option" type="button" role="menuitemradio" aria-checked="false" lang="${locale}" data-locale="${locale}" data-i18n-ignore><span class="language-option-label"><img class="language-flag" src="${LOCALE_FLAG_ASSETS[locale]}" width="28" height="20" alt="" aria-hidden="true"><span>${LOCALE_NAMES[locale]}</span></span><span class="language-check" aria-hidden="true">✓</span></button>`
     )).join('');
     return `<div class="language-selector" data-language-selector data-i18n-ignore><button class="language-selector-toggle" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="${id}" data-language-toggle><img class="language-flag" data-language-flag src="${LOCALE_FLAG_ASSETS[activeLocale]}" width="28" height="20" alt="" aria-hidden="true"><span data-language-current>${LOCALE_NAMES[activeLocale]}</span>${chevron}</button><div class="language-selector-menu" id="${id}" role="menu" data-language-menu hidden>${options}</div></div>`;
   }
@@ -405,7 +412,7 @@
   }
 
   async function initialise() {
-    setupLocalAuthenticationLinks();
+    setupAuthenticationLinks();
     setupLanguageSelectors();
     bindSourceContent();
     setupMobileMenu();

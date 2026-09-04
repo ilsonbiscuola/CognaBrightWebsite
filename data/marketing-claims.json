@@ -1,27 +1,27 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-07-23",
+  "reviewed_at": "2026-09-04",
   "statuses": ["verified_now", "in_development", "planned_for_evaluation", "not_claimed"],
   "claims": [
     {
       "id": "CB-MKT-001",
-      "statement": "Cogna Bright is developing a digital platform for everyday communication, routines and shared support and is seeking partners to shape evaluation.",
-      "status": "in_development",
+      "statement": "CognaBright helps families and support teams bring routines, communication, goals, progress and care-team collaboration together in one secure place.",
+      "status": "verified_now",
       "approved_for_publication": true,
-      "evidence": ["platform.html", "research.html", "organisations.html"],
-      "scope_note": "Developmental description only; no availability or effectiveness claim."
+      "evidence": ["index.html", "pricing.html", "platform.html"],
+      "scope_note": "Describes the live product available to families and organisations today."
     },
     {
       "id": "CB-MKT-002",
-      "statement": "Cogna Bright is preparing for independent evaluation and does not claim a completed university study.",
+      "statement": "CognaBright is available for families and organisations today, and is separately preparing for independent evaluation. This website does not present university findings, clinical results or validated effectiveness claims.",
       "status": "planned_for_evaluation",
       "approved_for_publication": true,
       "evidence": ["research.html", "evidence.html"],
-      "scope_note": "No institution, protocol, approval, commencement or result is implied."
+      "scope_note": "No institution, protocol, approval, commencement or result is implied by the separate evaluation pathway."
     },
     {
       "id": "CB-MKT-003",
-      "statement": "A server-mediated partnership enquiry pathway is implemented.",
+      "statement": "This website implements validated, server-side enquiry handling with a honeypot, request-size limits, consent capture and server-only database credentials.",
       "status": "verified_now",
       "approved_for_publication": true,
       "evidence": ["contact.html", "script.js", "api/interest.js", "api/interest.php", "supabase/migrations/20260723083004_add_partnership_enquiry_fields.sql", "supabase/migrations/20260723085919_harden_web_interest_grants.sql"],
@@ -29,7 +29,7 @@
     },
     {
       "id": "CB-MKT-004",
-      "statement": "Cogna Bright is seeking research conversations about evaluation design, feasibility, accessibility, implementation and evidence development.",
+      "statement": "CognaBright is seeking research conversations that can inform evaluation design, feasibility, accessibility, implementation and responsible evidence development.",
       "status": "planned_for_evaluation",
       "approved_for_publication": true,
       "evidence": ["research.html", "contact.html"],
@@ -37,31 +37,31 @@
     },
     {
       "id": "CB-MKT-005",
-      "statement": "Cogna Bright welcomes early conversations with disability, allied-health, education and community organisations.",
-      "status": "planned_for_evaluation",
+      "statement": "CognaBright gives disability and support organisations one place to coordinate routines, goals, evidence and care-team collaboration around the people they support.",
+      "status": "verified_now",
       "approved_for_publication": true,
-      "evidence": ["organisations.html", "contact.html"],
-      "scope_note": "Invitation to enquire; adoption or endorsement is not implied."
+      "evidence": ["organisations.html"],
+      "scope_note": "Describes the live organisation product; organisation pricing itself remains enquiry-based."
     },
     {
       "id": "CB-MKT-006",
-      "statement": "Families and providers may express interest in possible future pilots without any promise of a place, eligibility, date or access.",
+      "statement": "Families and providers may express interest in future research pilots. No pilot place, eligibility or start date is promised, and future eligibility criteria may differ from what applies today.",
       "status": "planned_for_evaluation",
       "approved_for_publication": true,
-      "evidence": ["pilots.html", "contact.html"],
-      "scope_note": "Expression of interest only; no pilot is represented as approved or open."
+      "evidence": ["research.html", "contact.html"],
+      "scope_note": "Distinct from ordinary family sign-up: this concerns formal research-pilot participation only."
     },
     {
       "id": "CB-MKT-007",
-      "statement": "The platform direction concerns communication, routines, observations and shared support, with exact capabilities subject to change.",
-      "status": "in_development",
+      "statement": "CognaBright is built around everyday communication, structured routines, observations and shared support.",
+      "status": "verified_now",
       "approved_for_publication": true,
       "evidence": ["platform.html"],
-      "scope_note": "No present availability, integration or outcome claim."
+      "scope_note": "Describes the live feature set; individual capabilities may still change."
     },
     {
       "id": "CB-MKT-008",
-      "statement": "The marketing repository uses a public evidence-status framework and claims registry.",
+      "statement": "CognaBright uses a public status framework and a claims registry to separate what is verified, what is still developing, what is planned for evaluation, and what is not claimed.",
       "status": "verified_now",
       "approved_for_publication": true,
       "evidence": ["evidence.html", "data/marketing-claims.json", "tests/site.test.mjs"],
@@ -69,7 +69,7 @@
     },
     {
       "id": "CB-MKT-009",
-      "statement": "Cogna Bright is inviting conversations about future independent evaluation; no completed study or finding is represented.",
+      "statement": "CognaBright is inviting conversations about future independent evaluation; no completed study or finding is represented.",
       "status": "planned_for_evaluation",
       "approved_for_publication": true,
       "evidence": ["research.html", "evidence.html", "contact.html"],
@@ -77,15 +77,15 @@
     },
     {
       "id": "CB-MKT-010",
-      "statement": "Cogna Bright is developing a digital platform and a partnership pathway before broad commercial or outcome claims.",
-      "status": "in_development",
+      "statement": "CognaBright helps families and support teams bring routines, communication, goals, progress and care-team collaboration together — personalised around the person, and connected with the people who support them.",
+      "status": "verified_now",
       "approved_for_publication": true,
-      "evidence": ["about.html", "platform.html", "contact.html"],
-      "scope_note": "Corporate development statement, not a product performance claim."
+      "evidence": ["about.html"],
+      "scope_note": "Corporate positioning statement; not an outcome or clinical-effectiveness claim."
     },
     {
       "id": "CB-MKT-011",
-      "statement": "The partnership form collects the fields listed in the website privacy notice.",
+      "statement": "The contact form collects the fields listed in the privacy notice.",
       "status": "verified_now",
       "approved_for_publication": true,
       "evidence": ["contact.html", "script.js", "api/interest.js", "api/interest.php"],
@@ -101,11 +101,11 @@
     },
     {
       "id": "CB-MKT-013",
-      "statement": "The repository does not implement advertising trackers, behavioural analytics, heat maps or a newsletter service.",
+      "statement": "The marketing website does not implement advertising trackers, behavioural analytics, heat maps or a newsletter service.",
       "status": "verified_now",
       "approved_for_publication": true,
       "evidence": ["docs/repository-audit.md", "package.json"],
-      "scope_note": "Repository scope only; ordinary hosting logs may still exist."
+      "scope_note": "Marketing-website scope only; ordinary hosting logs may still exist. Does not describe the separate CognaBright application."
     },
     {
       "id": "CB-MKT-014",
@@ -114,6 +114,30 @@
       "approved_for_publication": true,
       "evidence": ["accessibility.html", "styles.css", "script.js", "tests/site.test.mjs"],
       "scope_note": "Target statement only; manual and independent review remain outstanding."
+    },
+    {
+      "id": "CB-MKT-015",
+      "statement": "Family plans for one, two or three children are live today, with pricing fetched directly from CognaBright's subscription provider.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["pricing.html", "pricing.js", "evidence.html", "subscription-terms.html", "privacy.html"],
+      "scope_note": "Prices may vary by region and currency and can change."
+    },
+    {
+      "id": "CB-MKT-016",
+      "statement": "CognaBright does not claim to be clinically proven, independently validated, evidence-based in a research sense, or used or endorsed by a specific number of families, and does not claim to improve clinical, educational or family outcomes.",
+      "status": "not_claimed",
+      "approved_for_publication": true,
+      "evidence": ["evidence.html", "platform.html", "index.html"],
+      "scope_note": "Withheld pending independent evaluation; see the planned-for-evaluation claims for the separate research pathway."
+    },
+    {
+      "id": "CB-MKT-017",
+      "statement": "Create personalised routines, support communication and independence, follow meaningful goals and keep the people supporting your child connected.",
+      "status": "verified_now",
+      "approved_for_publication": true,
+      "evidence": ["families.html", "pricing.html", "platform.html"],
+      "scope_note": "Describes the live family product available today."
     }
   ]
 }

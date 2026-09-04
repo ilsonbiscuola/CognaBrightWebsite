@@ -1,6 +1,6 @@
-# Cogna Bright public marketing website
+# CognaBright public marketing website
 
-This repository contains the static public marketing website for Cogna Bright. Its primary conversion is a research or organisation partnership enquiry.
+This repository contains the static public marketing website for CognaBright. Its primary conversion is a research or organisation partnership enquiry.
 
 ## Scope
 
@@ -9,7 +9,7 @@ This repository contains the static public marketing website for Cogna Bright. I
 - Families and providers interested in approved future pilots
 - Public evidence status, claims governance, privacy and accessibility information
 
-The separate Cogna Bright application and authentication routes live in the
+The separate CognaBright application and authentication routes live in the
 application repository. During local testing, the public-site **Sign in** and
 **Sign up** actions point to `http://localhost:5173/sign-in` and
 `http://localhost:5173/signup`. No production or staging application hostname

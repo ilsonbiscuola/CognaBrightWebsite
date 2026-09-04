@@ -6,7 +6,7 @@ import test from 'node:test';
 const locales = ['en-AU', 'en-US', 'pt-BR', 'da-DK', 'fr-FR', 'de-DE', 'it-IT', 'es-ES', 'sv-SE'];
 const pages = [
   'index', 'research', 'organisations', 'pilots', 'platform', 'evidence',
-  'about', 'contact', 'privacy', 'accessibility', 'families', 'professionals', 'features'
+  'about', 'contact', 'privacy', 'terms', 'subscription-terms', 'accessibility', 'pricing', 'families', 'professionals', 'features'
 ];
 
 async function loadLocale(locale) {
@@ -40,8 +40,8 @@ test('every locale has complete, non-placeholder key coverage', async () => {
     for (const [key, value] of Object.entries(resource.messages)) {
       assert.equal(typeof value, 'string', `${resource.locale}:${key}`);
       assert.ok(value.trim(), `${resource.locale}:${key} is empty`);
-      assert.doesNotMatch(value, /\b(?:TODO|TRANSLATE|MISSING|TBD)\b/i, `${resource.locale}:${key}`);
-      assert.match(value, /Cogna Bright|^(?!.*Cogna)/, `${resource.locale}:${key} altered the brand`);
+      assert.doesNotMatch(value, /(?<![\p{L}\p{N}])(?:TODO|TRANSLATE|MISSING|TBD)(?![\p{L}\p{N}])/u, `${resource.locale}:${key}`);
+      assert.match(value, /CognaBright|^(?!.*Cogna)/, `${resource.locale}:${key} altered the brand`);
     }
   }
 });
@@ -73,6 +73,7 @@ test('runtime exposes all selectors, document metadata, and locale-aware asset h
 test('only language-neutral rendered assets are shipped', async () => {
   const build = await readFile(new URL('../scripts/build.mjs', import.meta.url), 'utf8');
   assert.match(build, /'logo\.png', 'mother-son-goals\.png'/);
+  assert.match(build, /join\(root, 'assets', 'flags'\).*recursive:\s*true/s);
   assert.doesNotMatch(build, /cp\(join\(root, 'assets'\), join\(output, 'assets'\)/);
   for (const page of pages) {
     const html = await readFile(new URL(`../${page}.html`, import.meta.url), 'utf8');
