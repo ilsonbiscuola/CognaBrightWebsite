@@ -7,9 +7,9 @@ const script = readFileSync(new URL('../script.js', import.meta.url), 'utf8');
 const contact = readFileSync(new URL('../contact.html', import.meta.url), 'utf8');
 const platform = readFileSync(new URL('../platform.html', import.meta.url), 'utf8');
 const pages = [
-  'index.html', 'research.html', 'organisations.html', 'families.html', 'platform.html',
+  'index.html', 'organisations.html', 'families.html', 'platform.html',
   'evidence.html', 'about.html', 'contact.html', 'privacy.html', 'terms.html', 'subscription-terms.html',
-  'accessibility.html', 'pricing.html'
+  'accessibility.html', 'pricing.html', 'delete-account.html'
 ];
 
 function luminance(hex) {

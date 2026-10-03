@@ -1,13 +1,22 @@
 # CognaBright public marketing website
 
-This repository contains the static public marketing website for CognaBright. Its primary conversion is a research or organisation partnership enquiry.
+This repository contains the static public marketing website for CognaBright,
+the official site at https://www.cognabright.com/. It presents the live product:
+visual routines, functional and multilingual communication, goals, rewards,
+Pain & Care, Print Studio and connected support for children, adolescents and
+adults with disability. The primary conversion is **Get CognaBright** (the web
+app at `app.cognabright.com`).
 
 ## Scope
 
-- Universities and researchers
-- Disability, allied-health, education and community organisations
-- Families and providers interested in approved future pilots
-- Public evidence status, claims governance, privacy and accessibility information
+- Families, professionals and organisations using CognaBright
+- The English and Brazilian Portuguese launch videos (homepage)
+- Family pricing (live) and organisation enquiries
+- Public evidence status, claims governance, privacy, accessibility and account deletion
+
+Research pages are hidden while there is no active research programme:
+`research.html` stays in the repository but is not built, linked or listed,
+and `/research` redirects temporarily to the homepage.
 
 The separate CognaBright application and authentication routes live in the
 application repository. During local testing, the public-site **Sign in** and
@@ -41,6 +50,14 @@ The website supports exactly `en-AU`, `en-US`, `pt-BR`, `da-DK`, `fr-FR`,
 2. cached or server-detected coarse country code;
 3. the first supported value in `navigator.languages`;
 4. `en-AU`.
+
+Translations are matched to English text by position, so
+`i18n/translation-sources.json` records the English each translation was
+reviewed against. After changing English copy, run
+`node scripts/generate-locales.mjs`: changed keys are listed and shown in
+English (never a mismatched translation) until reviewed translations are added
+to `i18n/reviewed-overrides.json` and the run is repeated with
+`--accept-translations`. The test suite fails while any key is pending.
 
 `cognabright_geo` stores only a two-letter country code and detection/expiry
 timestamps for seven days. `/api/country.php` is rewritten to the Vercel
