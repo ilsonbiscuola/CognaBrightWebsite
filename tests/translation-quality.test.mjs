@@ -18,7 +18,7 @@ test('authentication and accessibility language is reviewed in every translated 
     assert.ok(catalogue['common.nav.signUp']);
     assert.match(catalogue['accessibility.measures.p1'], /\(WCAG\) 2\.1/);
     assert.match(catalogue['accessibility.measures.p1'], /WCAG 2\.2/);
-    assert.match(catalogue['contact.form.p12'], /\*/);
+    assert.match(catalogue[keyFor('Fields marked * are required. This form is separate from the CognaBright application.')], /\*/);
   }
 });
 
@@ -26,7 +26,7 @@ test('known partnership and consent mistranslations cannot return', () => {
   const blocked = /sociedade em nome coletivo|société en nom collectif|società in nome collettivo|sociedad colectiva/i;
   for (const locale of locales) {
     const catalogue = messages(locale);
-    assert.doesNotMatch(catalogue['privacy.notice.p110'], blocked);
+    for (const value of Object.values(catalogue)) assert.doesNotMatch(value, blocked);
   }
   const portuguese = messages('pt-BR');
   assert.doesNotMatch(Object.values(portuguese).join('\n'), /salvaguardas?/i);
@@ -44,8 +44,22 @@ test('reviewed translation overrides cover every non-English locale and only can
   }
 });
 
+function keyFor(english) {
+  const key = Object.entries(messagesFromCanonical()).find(([, value]) => value === english)?.[0];
+  assert.ok(key, `no catalogue key for: ${english}`);
+  return key;
+}
+
 function messagesFromCanonical() {
   const context = { globalThis: {} };
   runInNewContext(readFileSync(new URL('../i18n/locales/en-AU.js', import.meta.url), 'utf8'), context);
   return context.globalThis.CognaBrightLocales['en-AU'].messages;
 }
+
+test('translated launch and legal copy never reintroduces pre-launch wording', () => {
+  const prelaunch = /em desenvolvimento e podem mudar|Direção da plataforma|Parcerias organizacionais|Consulta de parceria \||descreve apenas o site público|Que CognaBright melhora/;
+  const portuguese = messages('pt-BR');
+  assert.doesNotMatch(Object.values(portuguese).join('\n'), prelaunch);
+  assert.equal(portuguese[keyFor('See CognaBright in action')], 'Veja o CognaBright em ação');
+  assert.equal(portuguese[keyFor('CognaBright | Visual Routines, Functional Communication & Disability Support')], 'CognaBright | Rotinas Visuais, Comunicação Funcional e Suporte para Pessoas com Deficiência');
+});

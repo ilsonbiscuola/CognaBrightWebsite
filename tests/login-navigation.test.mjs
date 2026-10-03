@@ -6,7 +6,6 @@ const runtime = readFileSync(new URL('../script.js', import.meta.url), 'utf8');
 
 const pages = [
   'index.html',
-  'research.html',
   'organisations.html',
   'families.html',
   'platform.html',
@@ -17,7 +16,8 @@ const pages = [
   'terms.html',
   'subscription-terms.html',
   'accessibility.html',
-  'pricing.html'
+  'pricing.html',
+  'delete-account.html'
 ];
 
 test('every public page exposes distinct desktop and mobile sign-in and sign-up links to the real combined auth page', () => {

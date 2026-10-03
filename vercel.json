@@ -13,11 +13,16 @@
     { "source": "/case-studies", "destination": "/evidence", "permanent": true },
     { "source": "/outcomes", "destination": "/evidence", "permanent": true },
     { "source": "/contact-sales", "destination": "/contact", "permanent": true },
-    { "source": "/signup", "destination": "https://app.cognabright.com/sign-in", "permanent": false }
+    { "source": "/research", "destination": "/", "permanent": false },
+    { "source": "/research.html", "destination": "/", "permanent": false },
+    { "source": "/signup", "destination": "https://app.cognabright.com/sign-in", "permanent": false },
+    { "source": "/account-deletion", "destination": "/delete-account", "permanent": true },
+    { "source": "/delete-my-account", "destination": "/delete-account", "permanent": true }
   ],
   "rewrites": [
     { "source": "/api/interest.php", "destination": "/api/interest" },
-    { "source": "/api/country.php", "destination": "/api/country" }
+    { "source": "/api/country.php", "destination": "/api/country" },
+    { "source": "/api/account-deletion.php", "destination": "/api/account-deletion" }
   ],
   "headers": [
     {

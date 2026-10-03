@@ -4,21 +4,22 @@ import { pathToFileURL } from 'node:url';
 
 const root = process.cwd();
 const reviewedOverrides = JSON.parse(await readFile(join(root, 'i18n', 'reviewed-overrides.json'), 'utf8'));
-const pages = ['index', 'research', 'organisations', 'families', 'platform', 'evidence', 'about', 'contact', 'privacy', 'terms', 'subscription-terms', 'accessibility', 'pricing'];
+const pages = ['index', 'organisations', 'families', 'platform', 'evidence', 'about', 'contact', 'privacy', 'terms', 'subscription-terms', 'accessibility', 'pricing', 'delete-account'];
 const sectionNames = {
-  index: ['hero', 'audiences', 'whyChoose', 'evidence', 'cta'],
+  index: ['hero', 'video', 'routines', 'communication', 'multilingual', 'goals', 'connected', 'rewards', 'painCare', 'printStudio', 'audiences', 'evidence', 'cta'],
   research: ['hero', 'collaboration', 'status', 'pilots', 'firstConversation', 'cta'],
-  organisations: ['hero', 'team', 'manage', 'pricing', 'cta'],
+  organisations: ['hero', 'team', 'professionals', 'manage', 'pricing', 'cta'],
   families: ['hero', 'routines', 'goals', 'connect', 'cta'],
   platform: ['hero', 'everyday', 'communication', 'goals', 'working', 'create', 'boundaries', 'cta'],
   evidence: ['hero', 'framework', 'position', 'publication'],
-  about: ['hero', 'audience', 'principles', 'cta'],
+  about: ['hero', 'company', 'audience', 'principles', 'cta'],
   contact: ['hero', 'form'],
   privacy: ['hero', 'notice'],
   terms: ['hero', 'terms'],
   'subscription-terms': ['hero', 'subscription'],
   accessibility: ['hero', 'measures'],
-  pricing: ['hero', 'family', 'organisation', 'cta']
+  pricing: ['hero', 'family', 'organisation', 'cta'],
+  'delete-account': ['hero', 'inApp', 'request', 'deleted', 'subscriptions', 'retained', 'organisations', 'contact']
 };
 
 const common = new Map(Object.entries({
@@ -46,12 +47,11 @@ const common = new Map(Object.entries({
   'Terms': 'common.footer.terms',
   'Subscription terms': 'common.footer.subscriptionTerms',
   'Accessibility': 'common.footer.accessibility',
-  'Social media': 'common.footer.social.navLabel',
-  'Facebook': 'common.footer.social.facebook',
-  'Instagram': 'common.footer.social.instagram',
-  'YouTube': 'common.footer.social.youtube',
-  'TikTok': 'common.footer.social.tiktok',
-  'CognaBright website': 'common.footer.social.website',
+  'CognaBright on social media': 'common.footer.social.navLabel',
+  'CognaBright on Facebook': 'common.footer.social.facebook',
+  'CognaBright on Instagram': 'common.footer.social.instagram',
+  'CognaBright on YouTube': 'common.footer.social.youtube',
+  'CognaBright on TikTok': 'common.footer.social.tiktok',
   'Verified now': 'common.status.verified',
   'In development': 'common.status.development',
   'Planned for evaluation': 'common.status.evaluation',
@@ -83,7 +83,31 @@ const common = new Map(Object.entries({
   'A mother encouraging her son as they arrange visual routine cards together at home': 'home.hero.imageAlt',
   'For example, Australia': 'contact.form.country.placeholder',
   'For example, organisation pricing or accessibility review': 'contact.form.interest.placeholder',
-  "Describe your question, setting and what you'd like to explore.": 'contact.form.context.placeholder'
+  "Describe your question, setting and what you'd like to explore.": 'contact.form.context.placeholder',
+  'Delete account': 'common.footer.deleteAccount',
+  'Launch video': 'common.footer.launchVideo',
+  'Get CognaBright': 'common.actions.getCognaBright',
+  'Available now': 'common.availability.availableNow',
+  'Coming soon': 'common.availability.comingSoon',
+  'On the web': 'common.availability.web',
+  'Phone, tablet or computer': 'common.availability.webDevices',
+  'Google Play': 'common.availability.googlePlay',
+  'Android app': 'common.availability.android',
+  'Apple App Store': 'common.availability.appStore',
+  'iPhone and iPad app': 'common.availability.ios',
+  'Where to get CognaBright': 'common.availability.label',
+  'Visual support for everyday life — personalised around the person and connected with the people who support them.': 'common.footer.tagline',
+  'CognaBright launch video': 'home.video.iframeTitle',
+  // Reserved for the day the public Google Play listing is verified live
+  // (see docs/deployment.md): translations are ready before the HTML switch.
+  'Available now on Google Play': 'common.availability.googlePlayLive',
+  'Download CognaBright on Google Play': 'common.availability.googlePlayDownload',
+  'Request account deletion': 'delete-account.form.submit',
+  'Enter the email address linked to your CognaBright account.': 'delete-account.form.validation.emailRequired',
+  'Sending your request…': 'delete-account.form.messages.sending',
+  'Thank you, your request has been received. If an account matches the details you provided, CognaBright will process the request and may contact you at that email address if we need to verify it.': 'delete-account.form.messages.success',
+  'Too many requests have been sent from this device. Please wait a few minutes and try again.': 'delete-account.form.messages.rateLimited',
+  "We couldn't send your request right now. Please try again later, or email developer@cognabright.com.": 'delete-account.form.messages.unavailable'
 }));
 
 const messages = {};
@@ -104,10 +128,23 @@ function addMessage(requestedKey, value) {
   valueKeys.get(value).push(key);
 }
 
+// Catalogue values must equal the DOM text the runtime matches against, so
+// HTML entities are decoded (for example "Pain &amp; Care" -> "Pain & Care").
+function decodeEntities(value) {
+  const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+  return value.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (match, entity) => {
+    if (entity[0] === '#') {
+      const code = entity[1].toLowerCase() === 'x' ? Number.parseInt(entity.slice(2), 16) : Number(entity.slice(1));
+      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+    }
+    return named[entity.toLowerCase()] ?? match;
+  });
+}
+
 function attrsFromTag(token) {
   const attrs = {};
   for (const match of token.matchAll(/([:\w-]+)(?:="([^"]*)"|'([^']*)'|=([^\s>]+))?/g)) {
-    attrs[match[1].toLowerCase()] = match[2] ?? match[3] ?? match[4] ?? '';
+    attrs[match[1].toLowerCase()] = decodeEntities(match[2] ?? match[3] ?? match[4] ?? '');
   }
   return attrs;
 }
@@ -155,7 +192,7 @@ function keyForText(page, stack, counters) {
 
 function extractPage(page, html) {
   const meta = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
-  if (meta) addMessage(`${page}.meta.description`, meta[1]);
+  if (meta) addMessage(`${page}.meta.description`, decodeEntities(meta[1]));
   const stack = [];
   const counters = { header: 0, footer: 0, formLabel: 0, formOption: 0 };
   let sectionIndex = 0;
@@ -190,7 +227,7 @@ function extractPage(page, html) {
       continue;
     }
     if (skipDepth) continue;
-    const value = token.replace(/\s+/g, ' ').trim();
+    const value = decodeEntities(token).replace(/\s+/g, ' ').trim();
     if (value) addMessage(keyForText(page, stack, counters), value);
   }
 }
@@ -297,7 +334,8 @@ function americanise(value) {
     [/organisations/gi, (m) => m[0] === 'O' ? 'Organizations' : 'organizations'],
     [/organisation/gi, (m) => m[0] === 'O' ? 'Organization' : 'organization'],
     [/minimisation/gi, 'minimization'], [/behavioural/gi, 'behavioral'], [/colour/gi, 'color'],
-    [/enrolment/gi, 'enrollment'], [/enrol/gi, 'enroll'], [/practise/gi, 'practice']
+    [/enrolment/gi, 'enrollment'], [/enrol/gi, 'enroll'], [/practise/gi, 'practice'],
+    [/cancell(ed|ing)/gi, 'cancel$1']
   ];
   return replacements.reduce((result, [pattern, replacement]) => result.replace(pattern, replacement), value);
 }
@@ -337,18 +375,40 @@ if (process.argv.includes('--translate')) {
   }
 }
 
+// Keys are positional, so the English behind a key can change when a page is
+// edited. i18n/translation-sources.json records the English each translation
+// was reviewed against. A key whose English no longer matches is pending: every
+// translated locale shows English for it (never a mismatched translation) until
+// reviewed translations are added and the run is repeated with
+// --accept-translations. tests/i18n-completeness.test.mjs fails while any key
+// is pending.
+const sourcesPath = join(root, 'i18n', 'translation-sources.json');
+const acceptTranslations = process.argv.includes('--accept-translations');
+let translationSources = {};
+try { translationSources = JSON.parse(await readFile(sourcesPath, 'utf8')); } catch { translationSources = {}; }
+const pending = Object.keys(messages).filter((key) => translationSources[key] !== messages[key]);
+
 if (!process.argv.includes('--translate')) {
   for (const locale of Object.keys(reviewedOverrides)) {
     globalThis.CognaBrightLocales = {};
     const sourceUrl = `${pathToFileURL(join(output, `${locale}.js`)).href}?review=${Date.now()}-${locale}`;
     await import(sourceUrl);
     const existing = globalThis.CognaBrightLocales[locale]?.messages || {};
-    const merged = Object.fromEntries(Object.keys(messages).map((key) => [
-      key,
-      reviewedOverrides[locale]?.[key] ?? existing[key] ?? messages[key]
-    ]));
+    const merged = Object.fromEntries(Object.keys(messages).map((key) => {
+      const reviewed = acceptTranslations || translationSources[key] === messages[key];
+      return [key, reviewed ? (reviewedOverrides[locale]?.[key] ?? existing[key] ?? messages[key]) : messages[key]];
+    }));
     await writeFile(join(output, `${locale}.js`), resourceSource(locale, merged), 'utf8');
   }
+}
+
+if (acceptTranslations) {
+  await writeFile(sourcesPath, `${JSON.stringify(messages, null, 2)}
+`, 'utf8');
+  console.log(`Accepted reviewed translations for ${Object.keys(messages).length} keys`);
+} else if (pending.length) {
+  console.warn(`${pending.length} keys need reviewed translations (shown in English until accepted):`);
+  for (const key of pending) console.warn(`  ${key}: ${messages[key]}`);
 }
 
 await writeFile(join(root, 'i18n', 'source-index.json'), `${JSON.stringify({ pages, keys: Object.keys(messages).length, messages }, null, 2)}\n`, 'utf8');

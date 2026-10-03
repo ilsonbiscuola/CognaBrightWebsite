@@ -19,9 +19,39 @@
     'es-ES': './assets/flags/es.svg',
     'sv-SE': './assets/flags/se.svg'
   });
+  // Product screens are captured in English, with a Brazilian Portuguese
+  // capture where one exists. Other locales fall back to the English capture.
+  function localisedScreen(name) {
+    return Object.freeze({
+      type: 'LOCALISED',
+      fallback: `./assets/screens/${name}.en.webp`,
+      locales: Object.freeze({ 'pt-BR': `./assets/screens/${name}.pt-BR.webp` })
+    });
+  }
   const ASSET_MANIFEST = Object.freeze({
     logo: Object.freeze({ type: 'LANGUAGE-NEUTRAL', shared: './assets/logo.png' }),
-    'mother-son-goals': Object.freeze({ type: 'LANGUAGE-NEUTRAL', shared: './assets/mother-son-goals.png' })
+    'mother-son-goals': Object.freeze({ type: 'LANGUAGE-NEUTRAL', shared: './assets/mother-son-goals.webp' }),
+    'launch-video-thumbnail': Object.freeze({
+      type: 'LOCALISED',
+      fallback: './assets/video/launch-video.en.webp',
+      locales: Object.freeze({ 'pt-BR': './assets/video/launch-video.pt-BR.webp' })
+    }),
+    'screen-routine-builder': localisedScreen('routine-builder'),
+    'screen-sentence-builder': localisedScreen('sentence-builder'),
+    // Deliberately the Portuguese capture in every locale: it shows the
+    // product working in a language other than English.
+    'screen-multilingual': Object.freeze({ type: 'LANGUAGE-NEUTRAL', shared: './assets/screens/multilingual-sentence.pt-BR.webp' }),
+    'screen-goals': localisedScreen('goals'),
+    'screen-care-team-workspace': localisedScreen('care-team-workspace'),
+    'screen-rewards': localisedScreen('rewards'),
+    'screen-pain-and-care': localisedScreen('pain-and-care'),
+    'screen-print-studio': localisedScreen('print-studio')
+  });
+  // English pages lead with the English launch video and pt-BR pages with the
+  // Portuguese one. Every other locale uses the English video.
+  const LAUNCH_VIDEOS = Object.freeze({
+    en: Object.freeze({ id: 'qW6ac3IKAvU', captions: 'en' }),
+    'pt-BR': Object.freeze({ id: 'MLXYikTzDCg', captions: 'pt' })
   });
   const nodeBindings = new Map();
   const attributeBindings = new Map();
@@ -142,6 +172,10 @@
       }
       element.content = content;
     }
+    for (const [name, content] of Object.entries({ 'twitter:title': title, 'twitter:description': description })) {
+      const element = document.querySelector(`meta[name="${name}"]`);
+      if (element) element.content = content;
+    }
   }
 
   function localizedAsset(id, locale = activeLocale) {
@@ -152,8 +186,46 @@
     }
     if (asset.shared) return asset.shared;
     const value = asset.locales && asset.locales[locale];
-    if (!value && location.hostname === 'localhost') console.warn(`[i18n] Missing ${locale} variant for ${id}`);
+    if (!value && !asset.fallback && location.hostname === 'localhost') console.warn(`[i18n] Missing ${locale} variant for ${id}`);
     return value || asset.fallback || '';
+  }
+
+  function launchVideoFor(locale) {
+    return locale === 'pt-BR' ? LAUNCH_VIDEOS['pt-BR'] : LAUNCH_VIDEOS.en;
+  }
+
+  function updateLaunchVideo(locale) {
+    const video = launchVideoFor(locale);
+    const facade = document.querySelector('[data-video-facade]');
+    if (facade) facade.href = `https://www.youtube.com/watch?v=${video.id}`;
+    const primaryLanguage = locale === 'pt-BR' ? 'pt-BR' : 'en';
+    for (const link of document.querySelectorAll('[data-video-alternate]')) {
+      link.hidden = link.dataset.videoAlternate === primaryLanguage;
+    }
+  }
+
+  // The launch video is a click-to-play facade: nothing is requested from
+  // YouTube until the visitor chooses to play, and playback then uses the
+  // privacy-enhanced embed domain. Modified clicks still open YouTube.
+  function setupLaunchVideo() {
+    const frame = document.querySelector('[data-launch-video]');
+    const facade = frame && frame.querySelector('[data-video-facade]');
+    if (!facade) return;
+    facade.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const resource = globalThis.CognaBrightLocales[activeLocale] || canonical;
+      const video = launchVideoFor(activeLocale);
+      const params = new URLSearchParams({ autoplay: '1', rel: '0', cc_load_policy: '1', cc_lang_pref: video.captions, hl: activeLocale });
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${video.id}?${params}`;
+      iframe.title = message(resource, 'home.video.iframeTitle');
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      frame.replaceChildren(iframe);
+      iframe.focus();
+    });
   }
 
   function updateAssets(locale) {
@@ -225,6 +297,7 @@
     document.documentElement.dataset.locale = activeLocale;
     translateBoundContent(resource);
     updateAssets(activeLocale);
+    updateLaunchVideo(activeLocale);
     refreshSelectors(resource);
     document.querySelectorAll('[data-year]').forEach((element) => {
       element.textContent = new Intl.NumberFormat(activeLocale, { useGrouping: false }).format(new Date().getFullYear());
@@ -411,12 +484,108 @@
     });
   }
 
+  // Account-deletion requests never reveal whether an account exists: every
+  // accepted submission receives the same neutral confirmation. Field values
+  // are sent only to the server endpoint and are never logged.
+  function setupDeletionForm() {
+    const form = document.querySelector('[data-deletion-form]');
+    if (!form) return;
+    const startedAt = Date.now();
+    const email = form.querySelector('[name="email"]');
+    const fieldError = form.querySelector('[data-field-error]');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const messageElement = form.querySelector('[data-form-message]');
+    const endpoint = form.getAttribute('data-endpoint') || './api/account-deletion.php';
+    const t = (key) => message(globalThis.CognaBrightLocales[activeLocale] || canonical, key);
+    let lastFieldErrorKey = '';
+    let lastMessage = { key: '', state: '' };
+
+    const setFieldError = (key) => {
+      lastFieldErrorKey = key;
+      fieldError.textContent = key ? t(key) : '';
+      if (key) email.setAttribute('aria-invalid', 'true');
+      else email.removeAttribute('aria-invalid');
+    };
+    const showMessage = (key, state = '') => {
+      lastMessage = { key, state };
+      messageElement.textContent = key ? t(key) : '';
+      messageElement.dataset.state = state;
+      if (state) messageElement.focus();
+    };
+    const validateEmail = () => {
+      const value = email.value.trim();
+      if (!value) return 'delete-account.form.validation.emailRequired';
+      if (value.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'contact.form.validation.email';
+      return '';
+    };
+
+    email.addEventListener('input', () => { if (lastFieldErrorKey) setFieldError(validateEmail()); });
+    document.addEventListener('cognabright:localechange', () => {
+      if (lastFieldErrorKey) setFieldError(lastFieldErrorKey);
+      if (lastMessage.key) messageElement.textContent = t(lastMessage.key);
+      if (!submitButton.disabled) submitButton.textContent = t('delete-account.form.submit');
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const errorKey = validateEmail();
+      setFieldError(errorKey);
+      if (errorKey) {
+        showMessage('');
+        email.focus();
+        return;
+      }
+      if (location.protocol === 'file:') {
+        showMessage('contact.form.messages.localServerRequired', 'error');
+        return;
+      }
+      const formData = new FormData(form);
+      const payload = {
+        email: email.value.trim(),
+        name: String(formData.get('name') || '').trim(),
+        message: String(formData.get('message') || '').trim(),
+        website: String(formData.get('website') || '').trim(),
+        locale: activeLocale,
+        form_elapsed_ms: Date.now() - startedAt
+      };
+      submitButton.disabled = true;
+      submitButton.textContent = t('contact.form.messages.sendingShort');
+      showMessage('delete-account.form.messages.sending');
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (response.status === 429) {
+          showMessage('delete-account.form.messages.rateLimited', 'error');
+        } else if (response.status === 400) {
+          setFieldError('contact.form.validation.email');
+          showMessage('');
+          email.focus();
+        } else if (!response.ok) {
+          showMessage('delete-account.form.messages.unavailable', 'error');
+        } else {
+          form.reset();
+          showMessage('delete-account.form.messages.success', 'success');
+        }
+      } catch {
+        showMessage('delete-account.form.messages.unavailable', 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = t('delete-account.form.submit');
+      }
+    });
+  }
+
   async function initialise() {
     setupAuthenticationLinks();
     setupLanguageSelectors();
     bindSourceContent();
     setupMobileMenu();
+    setupLaunchVideo();
     setupForm();
+    setupDeletionForm();
     const boot = globalThis.__COGNABRIGHT_LOCALE_BOOT__ || {};
     let locale = boot.locale || 'en-AU';
     if (!boot.preference && !boot.cachedGeo) {

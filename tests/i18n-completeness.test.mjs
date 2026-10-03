@@ -5,8 +5,8 @@ import test from 'node:test';
 
 const locales = ['en-AU', 'en-US', 'pt-BR', 'da-DK', 'fr-FR', 'de-DE', 'it-IT', 'es-ES', 'sv-SE'];
 const pages = [
-  'index', 'research', 'organisations', 'pilots', 'platform', 'evidence',
-  'about', 'contact', 'privacy', 'terms', 'subscription-terms', 'accessibility', 'pricing', 'families', 'professionals', 'features'
+  'index', 'organisations', 'pilots', 'platform', 'evidence',
+  'about', 'contact', 'privacy', 'terms', 'subscription-terms', 'accessibility', 'pricing', 'families', 'professionals', 'features', 'delete-account'
 ];
 
 async function loadLocale(locale) {
@@ -17,17 +17,28 @@ async function loadLocale(locale) {
   return context.CognaBrightLocales[locale];
 }
 
+function decodeEntities(value) {
+  const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+  return value.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (match, entity) => {
+    if (entity[0] === '#') {
+      const code = entity[1].toLowerCase() === 'x' ? Number.parseInt(entity.slice(2), 16) : Number(entity.slice(1));
+      return String.fromCodePoint(code);
+    }
+    return named[entity.toLowerCase()] ?? match;
+  });
+}
+
 function visibleValues(html) {
   const withoutCode = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
   const values = [];
   for (const match of withoutCode.matchAll(/>([^<]+)</g)) {
-    const value = match[1].replace(/\s+/g, ' ').trim();
+    const value = decodeEntities(match[1]).replace(/\s+/g, ' ').trim();
     if (value && value !== '©' && !/^\d+$/.test(value)) values.push(value);
   }
   for (const match of withoutCode.matchAll(/(?:aria-label|placeholder|alt)="([^"]*)"/g)) {
-    if (match[1]) values.push(match[1]);
+    if (match[1]) values.push(decodeEntities(match[1]));
   }
-  for (const match of withoutCode.matchAll(/<meta\s+name="description"\s+content="([^"]+)"/gi)) values.push(match[1]);
+  for (const match of withoutCode.matchAll(/<meta\s+name="description"\s+content="([^"]+)"/gi)) values.push(decodeEntities(match[1]));
   return values;
 }
 
@@ -79,4 +90,11 @@ test('only language-neutral rendered assets are shipped', async () => {
     const html = await readFile(new URL(`../${page}.html`, import.meta.url), 'utf8');
     assert.doesNotMatch(html, /brand-presentation|website-preview/);
   }
+});
+
+test('every translation was reviewed against the current English source', async () => {
+  const canonical = await loadLocale('en-AU');
+  const sources = JSON.parse(await readFile(new URL('../i18n/translation-sources.json', import.meta.url), 'utf8'));
+  const pending = Object.keys(canonical.messages).filter((key) => sources[key] !== canonical.messages[key]);
+  assert.deepEqual(pending, [], `translations pending review (run node scripts/generate-locales.mjs for details): ${pending.join(', ')}`);
 });

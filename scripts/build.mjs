@@ -4,10 +4,10 @@ import { join } from 'node:path';
 const root = process.cwd();
 const output = join(root, 'dist');
 const files = [
-  'index.html', 'research.html', 'organisations.html', 'pilots.html', 'platform.html',
+  'index.html', 'organisations.html', 'pilots.html', 'platform.html',
   'evidence.html', 'about.html', 'contact.html', 'privacy.html', 'accessibility.html',
   'pricing.html', 'families.html', 'professionals.html', 'features.html', 'terms.html',
-  'subscription-terms.html', '404.html', 'styles.css', 'script.js', 'pricing.js',
+  'subscription-terms.html', 'delete-account.html', '404.html', 'styles.css', 'script.js', 'pricing.js',
   'robots.txt', 'sitemap.xml', 'vercel.json', 'htaccess', 'php.ini', 'site.webmanifest'
 ];
 
@@ -17,13 +17,18 @@ for (const file of files) await cp(join(root, file), join(output, file));
 await mkdir(join(output, 'assets'), { recursive: true });
 for (const asset of [
   'logo.png', 'mother-son-goals.png', 'mother-son-goals-tablet.png',
-  'families.png', 'organisations.png', 'features.png', 'research.png', 'about-us.png',
+  'families.png', 'organisations.png', 'features.png', 'about-us.png',
+  'mother-son-goals.webp', 'mother-son-goals-tablet.webp', 'families.webp', 'organisations.webp',
+  'features.webp', 'about-us.webp', 'og-cognabright.png',
   'favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png', 'apple-touch-icon.png',
   'icon-192.png', 'icon-512.png'
 ]) {
   await cp(join(root, 'assets', asset), join(output, 'assets', asset));
 }
 await cp(join(root, 'assets', 'flags'), join(output, 'assets', 'flags'), { recursive: true });
+for (const folder of ['screens', 'video']) {
+  await cp(join(root, 'assets', folder), join(output, 'assets', folder), { recursive: true });
+}
 await cp(join(root, 'api'), join(output, 'api'), { recursive: true });
 await mkdir(join(output, 'i18n', 'locales'), { recursive: true });
 for (const file of ['core.js', 'boot.js']) await cp(join(root, 'i18n', file), join(output, 'i18n', file));
